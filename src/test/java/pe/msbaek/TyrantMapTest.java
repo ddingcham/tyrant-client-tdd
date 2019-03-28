@@ -68,6 +68,14 @@ public class TyrantMapTest {
 	}
 
 	static class MockSocket extends Socket {
+		@Override
+		public InputStream getInputStream() throws IOException {
+			return null;
+		}
 
+		@Override
+		public OutputStream getOutputStream() throws IOException {
+			return null;
+		}
 	}
 }
