@@ -2,9 +2,12 @@ package pe.msbaek;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import java.io.*;
+import java.net.Socket;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -12,7 +15,22 @@ import static org.junit.Assert.assertThat;
 
 public class TyrantMapTest {
 
+	static final String TEMPORAL_TEST_NAME_PREFIX = "tEMp";
+
+	@Rule
+	public TestName testName = new TestName();
+
 	private TyrantMap map;
+
+	@Test(expected = IllegalArgumentException.class)
+	public void tEMp_generateWithNull() {
+		new TyrantMap(null);
+	}
+
+	@Test
+	public void tEMp_openWithMock() throws IOException {
+		new TyrantMap(new MockSocket()).open();
+	}
 
 	@Test
 	public void get_retrives_what_was_put() throws IOException {
@@ -32,12 +50,24 @@ public class TyrantMapTest {
 
 	@After
 	public void tearDown() throws IOException {
-		map.close();
+		if(!isTemporalTest()) {
+			map.close();
+		}
 	}
 
 	@Before
 	public void setUp() throws IOException {
-		map = new TyrantMap();
-		map.open();
+		if(!isTemporalTest()) {
+			map = new TyrantMap();
+			map.open();
+		}
+	}
+
+	private boolean isTemporalTest() {
+		return this.testName.getMethodName().contains(TEMPORAL_TEST_NAME_PREFIX);
+	}
+
+	static class MockSocket extends Socket {
+
 	}
 }
